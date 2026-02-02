@@ -477,8 +477,8 @@ function showResults(result) {
 
                     <div class="result-ads-grid">
                         ${ads.map((adPath, i) => {
-                            const filename = adPath.split('/').pop();
-                            return `
+                const filename = adPath.split('/').pop();
+                return `
                                 <div class="result-ad" data-url="/api/output/${filename}">
                                     <img src="/api/output/${filename}" alt="Ad ${i + 1}" loading="lazy">
                                     <div class="result-ad-overlay">
@@ -488,7 +488,7 @@ function showResults(result) {
                                     </div>
                                 </div>
                             `;
-                        }).join('')}
+            }).join('')}
                     </div>
                 </div>
             `;
@@ -590,12 +590,12 @@ function setButtonLoading(btn, loading) {
 
     if (loading) {
         btn.disabled = true;
-        if (content) content.classList.add('hidden');
-        if (loadingEl) loadingEl.classList.remove('hidden');
+        if (content) content.style.display = 'none';
+        if (loadingEl) loadingEl.style.display = 'flex';
     } else {
         btn.disabled = false;
-        if (content) content.classList.remove('hidden');
-        if (loadingEl) loadingEl.classList.add('hidden');
+        if (content) content.style.display = 'flex';
+        if (loadingEl) loadingEl.style.display = 'none';
     }
 }
 
