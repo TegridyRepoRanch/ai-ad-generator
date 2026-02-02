@@ -1,22 +1,23 @@
 """
-Image Generator - Google Generative AI integration for AI image generation
+Image Generator - Google GenAI integration for AI image generation
 Uses Imagen 3 for high-quality ad imagery
 """
 import asyncio
 from pathlib import Path
 from typing import Optional
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from config import GOOGLE_API_KEY, AD_SIZES, DEFAULT_AD_SIZE, OUTPUT_DIR
 
 
 class ImageGenerator:
     """
-    Handles all image generation via Google Generative AI (Imagen 3).
+    Handles all image generation via Google GenAI (Imagen 3).
     """
 
     def __init__(self):
-        genai.configure(api_key=GOOGLE_API_KEY)
-        self.model = genai.ImageGenerationModel("imagen-3.0-generate-002")
+        self.client = genai.Client(api_key=GOOGLE_API_KEY)
+        self.model = "imagen-3.0-generate-002"
 
     async def generate_image(
         self,
@@ -46,12 +47,15 @@ class ImageGenerator:
         loop = asyncio.get_event_loop()
         result = await loop.run_in_executor(
             None,
-            lambda: self.model.generate_images(
+            lambda: self.client.models.generate_images(
+                model=self.model,
                 prompt=prompt,
-                number_of_images=1,
-                aspect_ratio=aspect_ratio,
-                safety_filter_level="block_only_high",
-                person_generation="allow_adult",
+                config=types.GenerateImagesConfig(
+                    number_of_images=1,
+                    aspect_ratio=aspect_ratio,
+                    safety_filter_level="BLOCK_ONLY_HIGH",
+                    person_generation="ALLOW_ADULT",
+                )
             )
         )
 
@@ -63,9 +67,9 @@ class ImageGenerator:
         # Save the image
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Imagen returns images directly, save the first one
-        image = result.images[0]
-        image._pil_image.save(str(output_path), format="PNG")
+        # Save the first generated image
+        image = result.generated_images[0]
+        image.image.save(str(output_path))
 
         return output_path
 
