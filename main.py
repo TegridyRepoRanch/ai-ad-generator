@@ -75,12 +75,42 @@ async def root():
     return {"message": "AI Ad Generation Platform API", "docs": "/docs"}
 
 
+@app.get("/api/health")
+async def health():
+    """Check if the API is configured correctly"""
+    from config import GOOGLE_API_KEY, ANTHROPIC_API_KEY
+    
+    google_configured = bool(GOOGLE_API_KEY and len(GOOGLE_API_KEY) > 10)
+    anthropic_configured = bool(ANTHROPIC_API_KEY and len(ANTHROPIC_API_KEY) > 10)
+    
+    return {
+        "status": "healthy" if (google_configured and anthropic_configured) else "missing_keys",
+        "google_api_key": "configured" if google_configured else "MISSING - add GOOGLE_API_KEY to environment",
+        "anthropic_api_key": "configured" if anthropic_configured else "MISSING - add ANTHROPIC_API_KEY to environment",
+        "message": "Add missing API keys in Vercel Dashboard > Settings > Environment Variables" if not (google_configured and anthropic_configured) else "All systems operational"
+    }
+
+
 @app.post("/api/generate", response_model=JobStatus)
 async def generate_ads(request: GenerationRequest, background_tasks: BackgroundTasks):
     """
     Start a full ad generation job.
     Returns a job ID for tracking progress.
     """
+    # Check if API keys are configured
+    from config import GOOGLE_API_KEY, ANTHROPIC_API_KEY
+    
+    if not GOOGLE_API_KEY or len(GOOGLE_API_KEY) < 10:
+        raise HTTPException(
+            status_code=500, 
+            detail="GOOGLE_API_KEY not configured. Add it in Vercel Dashboard > Settings > Environment Variables"
+        )
+    if not ANTHROPIC_API_KEY or len(ANTHROPIC_API_KEY) < 10:
+        raise HTTPException(
+            status_code=500, 
+            detail="ANTHROPIC_API_KEY not configured. Add it in Vercel Dashboard > Settings > Environment Variables"
+        )
+    
     job_id = str(uuid.uuid4())
     
     # Initialize job status
