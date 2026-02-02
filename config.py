@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # API Keys
-REPLICATE_API_TOKEN = os.getenv("REPLICATE_API_TOKEN")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 # Paths
@@ -34,13 +34,12 @@ try:
 except Exception:
     pass  # May fail in some serverless environments, that's okay
 
-# Image Generation Settings
+# Image Generation Settings (Google Imagen)
 IMAGE_MODELS = {
-    "flux_pro": "black-forest-labs/flux-1.1-pro",
-    "flux_dev": "black-forest-labs/flux-dev",
-    "flux_schnell": "black-forest-labs/flux-schnell",  # Fastest, good for testing
+    "imagen_3": "imagen-3.0-generate-002",
+    "imagen_3_fast": "imagen-3.0-fast-generate-001",
 }
-DEFAULT_IMAGE_MODEL = "flux_pro"
+DEFAULT_IMAGE_MODEL = "imagen_3"
 
 # Ad Dimensions (standard social media sizes)
 AD_SIZES = {
