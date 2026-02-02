@@ -3,101 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Ad Generator</title>
+    <title>AdForge AI - Generate Stunning Ads in Minutes</title>
     <link rel="stylesheet" href="/static/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <div class="logo-icon">⚡</div>
-                <h1>AdForge AI</h1>
+    <div class="app">
+        <!-- Animated Background -->
+        <div class="bg-gradient"></div>
+        <div class="bg-grid"></div>
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <span class="brand-icon">⚡</span>
+                <span class="brand-text">AdForge<span class="brand-ai">AI</span></span>
             </div>
-            <p class="tagline">Generate 28 ad variations in minutes, not hours</p>
+            <div class="nav-stats" id="nav-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="product-count">0</span>
+                    <span class="stat-label">Products</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-number" id="ad-estimate">0</span>
+                    <span class="stat-label">Est. Ads</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <header class="hero" id="hero">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                Powered by Claude AI & Imagen 3
+            </div>
+            <h1 class="hero-title">
+                Generate <span class="gradient-text">Stunning Ads</span><br>
+                in Minutes, Not Hours
+            </h1>
+            <p class="hero-subtitle">
+                Transform your products into scroll-stopping ad creatives with AI-powered
+                headlines, emotional angles, and professional imagery.
+            </p>
+            <div class="hero-features">
+                <div class="feature-chip">
+                    <span class="chip-icon">🎯</span>
+                    Smart Headlines
+                </div>
+                <div class="feature-chip">
+                    <span class="chip-icon">🎨</span>
+                    AI Images
+                </div>
+                <div class="feature-chip">
+                    <span class="chip-icon">📐</span>
+                    6 Templates
+                </div>
+                <div class="feature-chip">
+                    <span class="chip-icon">⚡</span>
+                    28+ Variations
+                </div>
+            </div>
         </header>
 
         <!-- Main Content -->
-        <main class="main-content">
+        <main class="main">
             <!-- Input Section -->
-            <section class="input-section" id="input-section">
-                <div class="section-header">
-                    <h2>🎯 Products to Advertise</h2>
-                    <p>Add up to 7 products. Each will generate 4 ad variations (2 headlines × 2 images)</p>
-                </div>
-
-                <div class="products-container" id="products-container">
-                    <!-- Product cards will be added here -->
-                </div>
-
-                <button class="btn btn-secondary" id="add-product-btn" onclick="addProduct()">
-                    <span class="btn-icon">+</span> Add Product
-                </button>
-
-                <div class="generation-options">
-                    <h3>⚙️ Generation Settings</h3>
-                    <div class="options-grid">
-                        <div class="option-group">
-                            <label for="ad-size">Ad Size</label>
-                            <select id="ad-size">
-                                <option value="instagram_feed">Instagram Feed (1080×1080)</option>
-                                <option value="facebook_feed">Facebook Feed (1200×1200)</option>
-                                <option value="instagram_story">Instagram Story (1080×1920)</option>
-                                <option value="facebook_story">Facebook Story (1080×1920)</option>
-                            </select>
+            <section class="section input-section" id="input-section">
+                <div class="section-card">
+                    <div class="card-header">
+                        <div class="header-left">
+                            <h2 class="card-title">
+                                <span class="title-icon">📦</span>
+                                Your Products
+                            </h2>
+                            <p class="card-subtitle">Add up to 7 products to generate ad variations</p>
                         </div>
-                        <div class="option-group">
-                            <label for="headlines-count">Headlines per Product</label>
-                            <select id="headlines-count">
-                                <option value="2" selected>2 headlines</option>
-                                <option value="3">3 headlines</option>
-                                <option value="4">4 headlines</option>
-                            </select>
-                        </div>
-                        <div class="option-group">
-                            <label for="images-count">Images per Product</label>
-                            <select id="images-count">
-                                <option value="2" selected>2 images</option>
-                                <option value="3">3 images</option>
-                                <option value="4">4 images</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <button class="btn btn-primary btn-large" id="generate-btn" onclick="startGeneration()">
-                    <span class="btn-icon">🚀</span> Generate Ads
-                </button>
-            </section>
-
-            <!-- Progress Section (hidden by default) -->
-            <section class="progress-section hidden" id="progress-section">
-                <div class="progress-card">
-                    <div class="progress-header">
-                        <h2>⏳ Generating Your Ads</h2>
-                        <span class="progress-percent" id="progress-percent">0%</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" id="progress-bar"></div>
-                    </div>
-                    <p class="progress-message" id="progress-message">Initializing...</p>
-                    <div class="progress-tips">
-                        <p>💡 <strong>Tip:</strong> Image generation takes ~10-30 seconds per image</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Results Section (hidden by default) -->
-            <section class="results-section hidden" id="results-section">
-                <div class="results-header">
-                    <h2>✨ Your Ads Are Ready!</h2>
-                    <div class="results-actions">
-                        <button class="btn btn-primary" id="download-all-btn" onclick="downloadAll()">
-                            <span class="btn-icon">📥</span> Download All (ZIP)
+                        <button class="btn btn-outline btn-sm" id="add-product-btn" type="button">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Add Product
                         </button>
-                        <button class="btn btn-secondary" onclick="startOver()">
-                            <span class="btn-icon">🔄</span> Start Over
+                    </div>
+
+                    <div class="products-list" id="products-container">
+                        <!-- Products will be rendered here -->
+                    </div>
+
+                    <div class="empty-state hidden" id="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <p>No products added yet</p>
+                        <button class="btn btn-primary" id="add-first-product-btn" type="button">
+                            Add Your First Product
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Settings Card -->
+                <div class="section-card settings-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span class="title-icon">⚙️</span>
+                            Generation Settings
+                        </h2>
+                    </div>
+
+                    <div class="settings-grid">
+                        <div class="setting-group">
+                            <label class="setting-label">Ad Format</label>
+                            <div class="select-wrapper">
+                                <select id="ad-size" class="select">
+                                    <option value="instagram_feed">Instagram Feed (1080×1080)</option>
+                                    <option value="facebook_feed">Facebook Feed (1200×1200)</option>
+                                    <option value="instagram_story">Instagram Story (1080×1920)</option>
+                                    <option value="facebook_story">Facebook Story (1080×1920)</option>
+                                </select>
+                                <svg class="select-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6,9 12,15 18,9"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="setting-group">
+                            <label class="setting-label">Headlines per Product</label>
+                            <div class="select-wrapper">
+                                <select id="headlines-count" class="select">
+                                    <option value="2" selected>2 headlines</option>
+                                    <option value="3">3 headlines</option>
+                                    <option value="4">4 headlines</option>
+                                </select>
+                                <svg class="select-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6,9 12,15 18,9"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="setting-group">
+                            <label class="setting-label">Images per Product</label>
+                            <div class="select-wrapper">
+                                <select id="images-count" class="select">
+                                    <option value="2" selected>2 images</option>
+                                    <option value="3">3 images</option>
+                                    <option value="4">4 images</option>
+                                </select>
+                                <svg class="select-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6,9 12,15 18,9"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="estimate-bar">
+                        <div class="estimate-info">
+                            <span class="estimate-label">Estimated Output:</span>
+                            <span class="estimate-value" id="output-estimate">0 ads</span>
+                        </div>
+                        <div class="estimate-cost">
+                            ~$<span id="cost-estimate">0.00</span> estimated
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Button -->
+                <button class="btn btn-primary btn-xl generate-btn" id="generate-btn" type="button">
+                    <span class="btn-content">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                        Generate Ads
+                    </span>
+                    <span class="btn-loading hidden">
+                        <span class="spinner"></span>
+                        Starting...
+                    </span>
+                </button>
+            </section>
+
+            <!-- Progress Section -->
+            <section class="section progress-section hidden" id="progress-section">
+                <div class="progress-card">
+                    <div class="progress-visual">
+                        <div class="progress-ring">
+                            <svg viewBox="0 0 100 100">
+                                <circle class="progress-ring-bg" cx="50" cy="50" r="45"/>
+                                <circle class="progress-ring-fill" cx="50" cy="50" r="45" id="progress-ring"/>
+                            </svg>
+                            <div class="progress-percent" id="progress-percent">0%</div>
+                        </div>
+                    </div>
+                    <div class="progress-info">
+                        <h2 class="progress-title">Creating Your Ads</h2>
+                        <p class="progress-message" id="progress-message">Initializing...</p>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progress-bar"></div>
+                        </div>
+                        <div class="progress-steps">
+                            <div class="step" data-step="analyze">
+                                <span class="step-icon">🔍</span>
+                                <span class="step-label">Analyze</span>
+                            </div>
+                            <div class="step" data-step="headlines">
+                                <span class="step-icon">✍️</span>
+                                <span class="step-label">Headlines</span>
+                            </div>
+                            <div class="step" data-step="images">
+                                <span class="step-icon">🎨</span>
+                                <span class="step-label">Images</span>
+                            </div>
+                            <div class="step" data-step="compose">
+                                <span class="step-icon">✨</span>
+                                <span class="step-label">Compose</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="section results-section hidden" id="results-section">
+                <div class="results-header">
+                    <div class="results-title-group">
+                        <h2 class="results-title">
+                            <span class="success-icon">✨</span>
+                            Your Ads Are Ready!
+                        </h2>
+                        <p class="results-subtitle" id="results-count">Generated 0 ad variations</p>
+                    </div>
+                    <div class="results-actions">
+                        <button class="btn btn-primary" id="download-all-btn" type="button">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Download All (ZIP)
+                        </button>
+                        <button class="btn btn-outline" id="start-over-btn" type="button">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="1 4 1 10 7 10"></polyline>
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                            </svg>
+                            Start Over
                         </button>
                     </div>
                 </div>
@@ -110,7 +259,7 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>Built with ⚡ by AI • Powered by Claude & Flux</p>
+            <p>Built with <span class="heart">♥</span> using Claude AI & Google Imagen</p>
         </footer>
     </div>
 
