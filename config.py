@@ -34,12 +34,13 @@ try:
 except Exception:
     pass  # May fail in some serverless environments, that's okay
 
-# Image Generation Settings (Google Imagen)
+# Image Generation Settings (Google Imagen 4 - Imagen 3 was shut down)
 IMAGE_MODELS = {
-    "imagen_3": "imagen-3.0-generate-002",
-    "imagen_3_fast": "imagen-3.0-fast-generate-001",
+    "imagen_4": "imagen-4.0-generate-001",
+    "imagen_4_fast": "imagen-4.0-fast-generate-001",
+    "imagen_4_ultra": "imagen-4.0-ultra-generate-001",
 }
-DEFAULT_IMAGE_MODEL = "imagen_3"
+DEFAULT_IMAGE_MODEL = "imagen_4"
 
 # Ad Dimensions (standard social media sizes)
 AD_SIZES = {

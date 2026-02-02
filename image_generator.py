@@ -12,12 +12,13 @@ from config import GOOGLE_API_KEY, AD_SIZES, DEFAULT_AD_SIZE, OUTPUT_DIR
 
 class ImageGenerator:
     """
-    Handles all image generation via Google GenAI (Imagen 3).
+    Handles all image generation via Google GenAI (Imagen 4).
+    Note: Imagen 3 was shut down, now using Imagen 4.
     """
 
     def __init__(self):
         self.client = genai.Client(api_key=GOOGLE_API_KEY)
-        self.model = "imagen-3.0-generate-002"
+        self.model = "imagen-4.0-generate-001"  # Updated from imagen-3.0
 
     async def generate_image(
         self,
