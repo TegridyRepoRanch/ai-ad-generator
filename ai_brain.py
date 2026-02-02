@@ -16,7 +16,8 @@ class AIBrain:
     """
     
     def __init__(self):
-        self.client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        # Use AsyncAnthropic for proper async operation in serverless environments
+        self.client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
         self.model = "claude-sonnet-4-20250514"
     
     async def analyze_product(self, product_info: str, reference_context: Optional[str] = None) -> dict:
@@ -48,7 +49,7 @@ Respond in this exact JSON format:
     "product_in_shot": true or false (should the product itself appear in the ad image?)
 }}"""
 
-        response = self.client.messages.create(
+        response = await self.client.messages.create(
             model=self.model,
             max_tokens=1024,
             messages=[{"role": "user", "content": prompt}]
@@ -116,7 +117,7 @@ Respond in this exact JSON format:
     ]
 }}"""
 
-        response = self.client.messages.create(
+        response = await self.client.messages.create(
             model=self.model,
             max_tokens=1024,
             messages=[{"role": "user", "content": prompt}]
@@ -191,7 +192,7 @@ Respond in this exact JSON format:
     ]
 }}"""
 
-        response = self.client.messages.create(
+        response = await self.client.messages.create(
             model=self.model,
             max_tokens=1024,
             messages=[{"role": "user", "content": prompt}]
@@ -249,7 +250,7 @@ Create a prompt that will generate a STUNNING advertising image. Include:
 The prompt should be detailed but focused, around 50-80 words.
 Just respond with the prompt text, no JSON or formatting."""
 
-            response = self.client.messages.create(
+            response = await self.client.messages.create(
                 model=self.model,
                 max_tokens=512,
                 messages=[{"role": "user", "content": prompt}]
