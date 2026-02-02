@@ -50,6 +50,39 @@ python3 main.py
 
 Navigate to: **http://localhost:8000**
 
+---
+
+## Deploy to Vercel
+
+### 1. Push to GitHub
+
+```bash
+# Create a new repo on GitHub, then:
+git remote add origin https://github.com/YOUR_USERNAME/ai-ad-generator.git
+git push -u origin main
+```
+
+### 2. Import to Vercel
+
+1. Go to [vercel.com](https://vercel.com) and click "Add New Project"
+2. Import your GitHub repository
+3. Vercel will auto-detect the Python project
+
+### 3. Add Environment Variables
+
+In Vercel Dashboard → Your Project → Settings → Environment Variables, add:
+
+| Variable | Value |
+|----------|-------|
+| `REPLICATE_API_TOKEN` | Your Replicate API token |
+| `ANTHROPIC_API_KEY` | Your Anthropic/Claude API key |
+
+### 4. Deploy
+
+Click Deploy! Your app will be live at `https://your-project.vercel.app`
+
+---
+
 ## Usage
 
 1. **Add Products** (up to 7)
