@@ -1,0 +1,35 @@
+# Dependencies
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.eggs/
+*.egg-info/
+*.egg
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Output
+output/
+*.zip
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Vercel
+.vercel/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/

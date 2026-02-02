@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ad Generator</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <h1>AdForge AI</h1>
+            </div>
+            <p class="tagline">Generate 28 ad variations in minutes, not hours</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section" id="input-section">
+                <div class="section-header">
+                    <h2>🎯 Products to Advertise</h2>
+                    <p>Add up to 7 products. Each will generate 4 ad variations (2 headlines × 2 images)</p>
+                </div>
+
+                <div class="products-container" id="products-container">
+                    <!-- Product cards will be added here -->
+                </div>
+
+                <button class="btn btn-secondary" id="add-product-btn" onclick="addProduct()">
+                    <span class="btn-icon">+</span> Add Product
+                </button>
+
+                <div class="generation-options">
+                    <h3>⚙️ Generation Settings</h3>
+                    <div class="options-grid">
+                        <div class="option-group">
+                            <label for="ad-size">Ad Size</label>
+                            <select id="ad-size">
+                                <option value="instagram_feed">Instagram Feed (1080×1080)</option>
+                                <option value="facebook_feed">Facebook Feed (1200×1200)</option>
+                                <option value="instagram_story">Instagram Story (1080×1920)</option>
+                                <option value="facebook_story">Facebook Story (1080×1920)</option>
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label for="headlines-count">Headlines per Product</label>
+                            <select id="headlines-count">
+                                <option value="2" selected>2 headlines</option>
+                                <option value="3">3 headlines</option>
+                                <option value="4">4 headlines</option>
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label for="images-count">Images per Product</label>
+                            <select id="images-count">
+                                <option value="2" selected>2 images</option>
+                                <option value="3">3 images</option>
+                                <option value="4">4 images</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-large" id="generate-btn" onclick="startGeneration()">
+                    <span class="btn-icon">🚀</span> Generate Ads
+                </button>
+            </section>
+
+            <!-- Progress Section (hidden by default) -->
+            <section class="progress-section hidden" id="progress-section">
+                <div class="progress-card">
+                    <div class="progress-header">
+                        <h2>⏳ Generating Your Ads</h2>
+                        <span class="progress-percent" id="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <p class="progress-message" id="progress-message">Initializing...</p>
+                    <div class="progress-tips">
+                        <p>💡 <strong>Tip:</strong> Image generation takes ~10-30 seconds per image</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section (hidden by default) -->
+            <section class="results-section hidden" id="results-section">
+                <div class="results-header">
+                    <h2>✨ Your Ads Are Ready!</h2>
+                    <div class="results-actions">
+                        <button class="btn btn-primary" id="download-all-btn" onclick="downloadAll()">
+                            <span class="btn-icon">📥</span> Download All (ZIP)
+                        </button>
+                        <button class="btn btn-secondary" onclick="startOver()">
+                            <span class="btn-icon">🔄</span> Start Over
+                        </button>
+                    </div>
+                </div>
+
+                <div class="results-grid" id="results-grid">
+                    <!-- Results will be populated here -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with ⚡ by AI • Powered by Claude & Flux</p>
+        </footer>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

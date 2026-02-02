@@ -1,0 +1,23 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "main.py",
+            "use": "@vercel/python"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/static/(.*)",
+            "dest": "/static/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/main.py"
+        }
+    ],
+    "env": {
+        "REPLICATE_API_TOKEN": "@replicate_api_token",
+        "ANTHROPIC_API_KEY": "@anthropic_api_key"
+    }
+}
