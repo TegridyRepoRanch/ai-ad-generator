@@ -181,6 +181,35 @@ function renderProducts() {
                 ` : ''}
             </div>
 
+            <div class="url-fetch-bar">
+                <div class="url-input-wrapper">
+                    <svg class="url-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    <input
+                        type="url"
+                        class="url-input"
+                        placeholder="Paste a product URL and we'll grab the details..."
+                        data-url-product-id="${product.id}"
+                    >
+                </div>
+                <button class="btn btn-accent btn-sm url-fetch-btn" data-fetch-id="${product.id}" type="button">
+                    <span class="fetch-btn-content">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9"></path>
+                        </svg>
+                        Fetch
+                    </span>
+                    <span class="fetch-btn-loading" style="display: none;">
+                        <span class="spinner-sm"></span>
+                        Fetching...
+                    </span>
+                </button>
+            </div>
+
+            <div class="divider-or"><span>or enter manually</span></div>
+
             <div class="product-fields">
                 <div class="field-row">
                     <div class="field-group" style="flex: 1;">
@@ -246,6 +275,26 @@ function attachProductListeners() {
         });
     });
 
+    // URL fetch buttons
+    document.querySelectorAll('.url-fetch-btn[data-fetch-id]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const id = parseInt(btn.dataset.fetchId);
+            fetchProductFromUrl(id);
+        });
+    });
+
+    // URL input - allow Enter key to trigger fetch
+    document.querySelectorAll('.url-input[data-url-product-id]').forEach(input => {
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const id = parseInt(input.dataset.urlProductId);
+                fetchProductFromUrl(id);
+            }
+        });
+    });
+
     // Input fields
     document.querySelectorAll('.field-input[data-product-id], .field-textarea[data-product-id]').forEach(input => {
         input.addEventListener('input', (e) => {
@@ -263,6 +312,86 @@ function attachProductListeners() {
             updateProduct(id, field, e.target.checked);
         });
     });
+}
+
+async function fetchProductFromUrl(productId) {
+    const urlInput = document.querySelector(`.url-input[data-url-product-id="${productId}"]`);
+    const fetchBtn = document.querySelector(`.url-fetch-btn[data-fetch-id="${productId}"]`);
+
+    if (!urlInput || !urlInput.value.trim()) {
+        showNotification('Please paste a product URL first', 'warning');
+        return;
+    }
+
+    const url = urlInput.value.trim();
+
+    // Basic URL validation
+    try {
+        new URL(url);
+    } catch {
+        showNotification('Please enter a valid URL (e.g., https://example.com/product)', 'error');
+        return;
+    }
+
+    // Set loading state
+    if (fetchBtn) {
+        const content = fetchBtn.querySelector('.fetch-btn-content');
+        const loading = fetchBtn.querySelector('.fetch-btn-loading');
+        fetchBtn.disabled = true;
+        if (content) content.style.display = 'none';
+        if (loading) loading.style.display = 'flex';
+    }
+
+    try {
+        const formData = new FormData();
+        formData.append('url', url);
+
+        const response = await fetch('/api/scrape-product', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.detail || 'Failed to fetch product info');
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Update state
+            updateProduct(productId, 'name', data.name);
+            updateProduct(productId, 'description', data.description);
+
+            // Re-render to show the filled data
+            renderProducts();
+
+            // Flash the product card to show it was updated
+            setTimeout(() => {
+                const card = document.querySelector(`[data-product-id="${productId}"]`);
+                if (card) {
+                    card.classList.add('url-fetched');
+                    setTimeout(() => card.classList.remove('url-fetched'), 2000);
+                }
+            }, 100);
+
+            showNotification(`Product info fetched for "${data.name}"`, 'success');
+        }
+
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        showNotification('Failed to fetch product: ' + error.message, 'error');
+    } finally {
+        // Reset button state (may be re-rendered, so query again)
+        const btn = document.querySelector(`.url-fetch-btn[data-fetch-id="${productId}"]`);
+        if (btn) {
+            const content = btn.querySelector('.fetch-btn-content');
+            const loading = btn.querySelector('.fetch-btn-loading');
+            btn.disabled = false;
+            if (content) content.style.display = 'flex';
+            if (loading) loading.style.display = 'none';
+        }
+    }
 }
 
 function updateAddButtonState() {

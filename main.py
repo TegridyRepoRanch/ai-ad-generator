@@ -11,6 +11,8 @@ import asyncio
 import uuid
 import shutil
 import json
+import aiohttp
+from bs4 import BeautifulSoup
 
 from config import OUTPUT_DIR, STATIC_DIR
 from ai_brain import AIBrain
@@ -184,6 +186,108 @@ async def generate_headlines_endpoint(product: ProductInput, count: int = 4):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/scrape-product")
+async def scrape_product(url: str = Form(...)):
+    """
+    Scrape a product URL and extract product info using AI.
+    Returns name, description, and other details.
+    """
+    try:
+        # Fetch the page
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                if resp.status != 200:
+                    raise HTTPException(status_code=400, detail=f"Could not fetch URL (status {resp.status})")
+                html = await resp.text()
+
+        # Parse HTML and extract meaningful text
+        soup = BeautifulSoup(html, "html.parser")
+
+        # Remove script/style/nav/footer noise
+        for tag in soup(["script", "style", "nav", "footer", "header", "iframe", "noscript"]):
+            tag.decompose()
+
+        # Get page title
+        page_title = soup.title.string.strip() if soup.title and soup.title.string else ""
+
+        # Get meta description
+        meta_desc = ""
+        meta_tag = soup.find("meta", attrs={"name": "description"})
+        if meta_tag and meta_tag.get("content"):
+            meta_desc = meta_tag["content"]
+
+        # Get OG tags
+        og_title = ""
+        og_desc = ""
+        og_tag = soup.find("meta", attrs={"property": "og:title"})
+        if og_tag and og_tag.get("content"):
+            og_title = og_tag["content"]
+        og_tag = soup.find("meta", attrs={"property": "og:description"})
+        if og_tag and og_tag.get("content"):
+            og_desc = og_tag["content"]
+
+        # Get visible text (truncated to avoid token limits)
+        body_text = soup.get_text(separator="\n", strip=True)
+        # Take first ~3000 chars of body text
+        body_text = body_text[:3000]
+
+        # Use Claude to extract structured product info
+        scraped_content = f"""URL: {url}
+Page Title: {page_title}
+Meta Description: {meta_desc}
+OG Title: {og_title}
+OG Description: {og_desc}
+
+Page Content:
+{body_text}"""
+
+        extraction_prompt = f"""Extract product information from this scraped webpage. I need:
+1. The product name (short, concise)
+2. A detailed product description suitable for generating advertising (include benefits, features, target audience, key selling points)
+
+Scraped content:
+{scraped_content}
+
+Respond in this exact JSON format:
+{{
+    "name": "Product Name",
+    "description": "Detailed description of the product including benefits, features, target audience, and selling points. Write 2-3 sentences."
+}}"""
+
+        response = await ai_brain.client.messages.create(
+            model=ai_brain.model,
+            max_tokens=1024,
+            messages=[{"role": "user", "content": extraction_prompt}]
+        )
+
+        response_text = response.content[0].text
+        if "```json" in response_text:
+            response_text = response_text.split("```json")[1].split("```")[0]
+        elif "```" in response_text:
+            response_text = response_text.split("```")[1].split("```")[0]
+
+        product_data = json.loads(response_text.strip())
+
+        return {
+            "success": True,
+            "name": product_data.get("name", ""),
+            "description": product_data.get("description", ""),
+            "url": url
+        }
+
+    except aiohttp.ClientError as e:
+        raise HTTPException(status_code=400, detail=f"Failed to fetch URL: {str(e)}")
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=500, detail="Failed to parse product info from page")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error scraping product: {str(e)}")
 
 
 @app.get("/api/output/{filename}")
