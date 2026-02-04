@@ -18,7 +18,7 @@ class AIBrain:
     def __init__(self):
         # Use AsyncAnthropic for proper async operation in serverless environments
         self.client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
-        self.model = "claude-sonnet-4-20250514"
+        self.model = "claude-sonnet-4-5-20250929"
     
     async def analyze_product(self, product_info: str, reference_context: Optional[str] = None) -> dict:
         """
@@ -267,7 +267,7 @@ class AIBrainSync:
     
     def __init__(self):
         self.client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-        self.model = "claude-sonnet-4-20250514"
+        self.model = "claude-sonnet-4-5-20250929"
         self._async_brain = AIBrain()
     
     def analyze_product(self, product_info: str, reference_context: Optional[str] = None) -> dict:

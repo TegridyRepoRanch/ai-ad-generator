@@ -1,6 +1,6 @@
 """
 Image Generator - Google GenAI integration for AI image generation
-Uses Imagen 3 for high-quality ad imagery
+Uses Imagen 4 for high-quality ad imagery
 """
 import asyncio
 from pathlib import Path
@@ -13,12 +13,11 @@ from config import GOOGLE_API_KEY, AD_SIZES, DEFAULT_AD_SIZE, OUTPUT_DIR
 class ImageGenerator:
     """
     Handles all image generation via Google GenAI (Imagen 4).
-    Note: Imagen 3 was shut down, now using Imagen 4.
     """
 
     def __init__(self):
         self.client = genai.Client(api_key=GOOGLE_API_KEY)
-        self.model = "imagen-4.0-generate-001"  # Updated from imagen-3.0
+        self.model = "imagen-4.0-generate-001"
 
     async def generate_image(
         self,
@@ -45,7 +44,7 @@ class ImageGenerator:
         aspect_ratio = self._get_aspect_ratio(width, height)
 
         # Run image generation in executor to avoid blocking
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         result = await loop.run_in_executor(
             None,
             lambda: self.client.models.generate_images(
@@ -78,7 +77,7 @@ class ImageGenerator:
         """Convert dimensions to Imagen aspect ratio string"""
         ratio = width / height
 
-        # Imagen 3 supported aspect ratios
+        # Imagen 4 supported aspect ratios
         if abs(ratio - 1.0) < 0.1:
             return "1:1"
         elif abs(ratio - 16/9) < 0.1:
@@ -155,7 +154,6 @@ class ImageGenerator:
 class ImageGeneratorWithFallback(ImageGenerator):
     """
     Image generator with automatic retry on failure.
-    Uses Imagen 3 with retry logic.
     """
 
     def __init__(self):
